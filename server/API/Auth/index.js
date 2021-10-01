@@ -1,3 +1,4 @@
+
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -13,7 +14,7 @@ Params    None
 Access    Public
 Method    POST
 */
-
+/*
 Router.post("/signup", async(req,res) => {
   try {
     const { email, password, fullname, phoneNumber} = req.body.credentials;
@@ -39,6 +40,30 @@ Router.post("/signup", async(req,res) => {
 
     //JWT Auth Token-> to add extra layer of security
     const token = jwt.sign({user: {fullname, email}}, "ZomatoApp");
+
+    return res.status(200).json({token});
+  }
+  catch (error) {
+    return res.status(500).json({error: error.message});
+  }
+
+});
+
+export default Router;
+*/
+Router.post("/signup", async(req,res) => {
+  try {
+  
+    // check whether email or phone number exits
+    await UserModel.findEmailAndPhone(req.body.credentials);
+
+    //hashing and salting
+
+    //DB
+    const newUser = await UserModel.create(req.body.credentials);
+
+    //JWT Auth Token-> to add extra layer of security
+    const token = newUser.generateJwtToken();
 
     return res.status(200).json({token});
   }
